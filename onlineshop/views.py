@@ -74,6 +74,11 @@ class OrderView(APIView):
                 'data': serializer.errors,
                 'message': "Something went wrong"
                 }, status=status.HTTP_500_BAD_REQUEST)
+            subject = " New Order is Updated"
+            message = "Dear Customer" + " " + data['customer_name'] + "Your order is updated"
+            email = data['customer_email']
+            recipient_list = [email]
+            send_mail(subject, message, EMAIL_HOST_USER, recipient_list, fail_silently=True)
             
             serializer.save()
 
@@ -98,16 +103,20 @@ class OrderView(APIView):
                     'data': {},
                     'message': "order not found id"
             }, status=status.HTTP_404_NOT_FOUND)
+            
 
             order1[0].delete()
+            
             return Response({
                 'data': {},
                 'message': "order Is Deleted"
             }, status=status.HTTP_200_OK)
-
+            
+        
         except:
             return Response({
                 'data': {},
-                'message': "Something went wrong in Deleting ofthis order"
+                'message': "Something went wrong in Deleting of this order"
             }, status=status.HTTP_400_BAD_REQUEST)
+            
         
